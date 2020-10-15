@@ -1,0 +1,193 @@
+<!--
+Copyright 2020 Google LLC
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<template>
+  <div id="app">
+
+    <!-- Left panel with cover effect-->
+    <div class="panel panel-left panel-cover theme-dark panel-init">
+      <div class="view">
+        <div class="page">
+          <div class="navbar">
+            <div class="navbar-bg"></div>
+            <div class="navbar-inner">
+              <div class="title">
+                <span lang="ru">Дурак</span>
+                <span lang="en">Durak</span>
+              </div>
+            </div>
+          </div>
+          <div class="page-content">
+            <div class="block">
+              <button class="button" @click="newGame">
+                <span lang="ru">Новая игра</span>
+                <span lang="en">New game</span>
+              </button>
+            </div>
+            <div class="block">
+              <div class="list">
+                <ul>
+                  <li class="item-content item-input">
+                    <div class="item-inner">
+                      <div class="item-title item-label">
+                        <span lang="ru">Код игры</span>
+                        <span lang="en">Game code</span>
+                      </div>
+                      <div class="item-input-wrap">
+                        <input type="number" name="gameCode" id="gameCode">
+                        <span class="input-clear-button"></span>
+                      </div>
+                    </div>
+                  </li>
+                  <li class="item-content item-input">
+                    <button class="button" @click="joinGame">
+                      <span lang="ru">Присоединиться</span>
+                      <span lang="en">Join game</span>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="block">
+              <button class="button" @click="russian">Русский</button>
+              <button class="button" @click="english">English</button>
+            </div>
+            <div class="block">
+              <button class="button" @click="about">
+                <span lang="ru">Об игре</span>
+                <span lang="en">About</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right panel with cover effect-->
+    <div class="panel panel-right panel-cover theme-dark panel-init">
+      <div class="view">
+        <div class="page">
+          <div class="navbar">
+            <div class="navbar-bg"></div>
+            <div class="navbar-inner">
+              <div class="title">JSON response</div>
+            </div>
+          </div>
+          <div class="page-content">
+            <div class="block" id="json" style="font-family: monospace; white-space: pre; font-size: 6pt"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Your main view, should have "view-main" class -->
+    <div class="view view-main view-init safe-areas" data-url="/"></div>
+  </div>
+</template>
+<script>
+  import {display, displayFromSavedData} from './js/display';
+  import {subscribe, handleRefresh} from './js/subscribe';
+  import {gameReset} from './js/misc';
+  import {_} from './js/l10n';
+
+  function setDiscardRotations() {
+    const rotations = [];
+    for (let idx = 0; idx < 36; ++idx) {
+      rotations.push(Math.round(Math.random() * 180));
+    }
+    localStorage.setItem('discardRotations', JSON.stringify(rotations));
+  }
+
+  export default {
+    methods: {
+      newGame() {
+        this.$f7.panel.get('.panel-left').close();
+        const savedName = localStorage.getItem('playerName') || undefined;
+        this.$f7.dialog.prompt(
+          _('Ваше имя?'),
+          _('Новая игра'),
+          (playerName) => { this.newGameCallback(playerName); },
+          () => {},
+          savedName
+        );
+      },
+
+      joinGame() {
+        this.$f7.panel.get('.panel-left').close();
+        const savedName = localStorage.getItem('playerName') || undefined;
+        const gameCode = this.$$("#gameCode").val();
+        if (gameCode.length === 4) {
+          this.$f7.dialog.prompt(
+            _('Ваше имя?'),
+            _('Присоединиться'),
+            (playerName) => { this.joinGameCallback(gameCode, playerName); },
+            () => {},
+            savedName
+          );
+        } else {
+          this.$f7.dialog.alert(_('Код должен содержать четыре цифры.'));
+        }
+      },
+
+      about() {
+        this.$f7.dialog.alert(_('Дурак') + '<br><br>' +
+                              _('Работает на Node.js, Express, Framework7.io.') + '<br><br>' +
+                              'Alexander Fenster, fenster@fenster.name');
+      },
+
+      russian() {
+        this.$$(`:lang(ru)`).addClass('display-unset');
+        this.$$(`:lang(ru)`).removeClass('display-none');
+        this.$$(`[lang]:not(:lang(ru))`).addClass('display-none');
+        this.$$(`[lang]:not(:lang(ru))`).removeClass('display-unset');
+        this.name = 'Дурак';
+        localStorage.removeItem('lang');
+        displayFromSavedData(this);
+      },
+
+      english() {
+        this.$$(`:lang(en)`).addClass('display-unset');
+        this.$$(`:lang(en)`).removeClass('display-none');
+        this.$$(`[lang]:not(:lang(en))`).addClass('display-none');
+        this.$$(`[lang]:not(:lang(en))`).removeClass('display-unset');
+        localStorage.setItem('lang', 'en');
+        this.name = _('Дурак');
+        displayFromSavedData(this);
+      },
+
+      async newGameCallback(playerName) {
+        localStorage.setItem('playerName', playerName);
+        const {data} = await this.$f7.request.promise.postJSON(`durak/v1/player/${playerName}/newGame`);
+        localStorage.setItem('gameData', JSON.stringify(data));
+        setDiscardRotations();
+        gameReset(data);
+        display(this, data);
+        subscribe(this, data.playerKey);
+        handleRefresh(this, data);
+      },
+
+      async joinGameCallback(gameCode, playerName) {
+        localStorage.setItem('playerName', playerName);
+        const {data} = await this.$f7.request.promise.postJSON(`durak/v1/player/${playerName}/joinGame/${gameCode}`);
+        localStorage.setItem('gameData', JSON.stringify(data));
+        setDiscardRotations();
+        gameReset(data);
+        display(this, data);
+        subscribe(this, data.playerKey);
+        handleRefresh(this, data);
+      },
+    }
+  }
+</script>

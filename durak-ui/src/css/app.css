@@ -1,0 +1,215 @@
+/*
+Copyright 2020 Google LLC
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+.card {
+  background: inherit;
+  margin: 0;
+  padding: 0;
+  --f7-card-box-shadow: none;
+}
+
+#hand {
+  font-size: 55pt;
+  cursor: pointer;
+}
+
+.card-selected {
+  background-color: lightblue;
+}
+
+.card-cannot-beat {
+  background-color: red;
+}
+
+.others-hand {
+  font-size: 20pt;
+  overflow: hidden;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  top: -2pt;
+}
+
+.discarded-card {
+  display: inline-block;
+  position: absolute;
+  left: 0pt;
+  top: 0pt;
+  background: inherit;
+  margin: 0;
+  padding: 0;
+  --f7-card-box-shadow: none;
+}
+
+#deck-count {
+  font-size: 15px;
+  display: inline-block;
+  position: relative;
+  min-width: 17px;
+  min-height: 90px;
+}
+
+#deck {
+  font-size: 55pt;
+  display: inline-block;
+  position: relative;
+  z-index: 20;
+  margin: 0;
+  padding: 0;
+  min-width: 52px;
+}
+
+#discard-count {
+  font-size: 20px;
+}
+
+#discard {
+  font-size: 55pt;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+#trump {
+  font-size: 55pt;
+  background: inherit;
+  display: inline-block;
+  transform: rotate(-90deg);
+  position: relative;
+  left: -25pt;
+  top: 3pt;
+  z-index: 10;
+  margin: 0;
+  padding: 0;
+}
+
+#trump-suite {
+  font-size: 30pt;
+  background: inherit;
+  display: inline-block;
+  position: relative;
+  left: -25pt;
+  top: 3pt;
+  z-index: 10;
+  margin: 0;
+  padding: 0;
+}
+
+.red {
+  color: red;
+}
+
+.black {
+  color: black;
+}
+
+.darkblue {
+  color: darkblue;
+}
+
+.swiper-pagination-lock {
+  display: none;
+}
+
+#sortCards {
+  display: none;
+  cursor: pointer;
+}
+
+#start {
+  display: none;
+  text-align: center;
+}
+
+#pass {
+  display: none;
+  text-align: center;
+}
+
+#pickUp {
+  display: none;
+  text-align: center;
+}
+
+#onceMore {
+  display: none;
+  text-align: center;
+}
+
+#attack {
+  font-size: 55pt;
+  min-height: 110px;
+  cursor: pointer;
+}
+
+.attacking-card {
+  display: inline-block;
+  position: relative;
+}
+
+.defending-card {
+  display: inline-block;
+  position: absolute;
+  left: 10pt;
+  top: 5pt;
+}
+
+.card-pair {
+  display: inline-block;
+  position: relative;
+}
+
+.before-game-buttons {
+  min-height: 5pt;
+}
+
+.game-buttons {
+  min-height: 36px;
+}
+
+.deck {
+  display: none;
+}
+
+#waitingForPlayers {
+  display: none;
+  text-align: center;
+}
+
+.swiper-slide {
+  width: 52px;
+}
+
+.swiper-pagination {
+  display: none;
+}
+
+[lang] {
+  display: none;
+}
+
+[lang=ru] {
+  display: unset;
+}
+
+.display-unset {
+  display: unset;
+}
+
+.display-none {
+  display: none;
+}

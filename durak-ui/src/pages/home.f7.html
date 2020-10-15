@@ -1,0 +1,257 @@
+<!--
+Copyright 2020 Google LLC
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<template>
+  <div class="page" data-name="home" id="page">
+    <!-- Top Navbar -->
+    <div class="navbar">
+      <div class="navbar-bg"></div>
+      <div class="navbar-inner">
+        <div class="left">
+          <a href="#" class="link icon-only panel-open" data-panel="left">
+            <i class="icon f7-icons if-not-md">menu</i>
+            <i class="icon material-icons if-md">menu</i>
+          </a>
+        </div>
+        <div class="title">
+          <span lang="ru">Дурак</span>
+          <span lang="en">Durak</span>
+        </div>
+        <div class="right">
+          <a href="#" class="link icon-only panel-open" data-panel="right">
+            <i class="icon f7-icons if-not-md">doc</i>
+            <i class="icon material-icons if-md">doc</i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-content ptr-content">
+      <div class="ptr-preloader">
+        <div class="preloader"></div>
+        <div class="ptr-arrow"></div>
+      </div>
+
+      <div class="block">
+        <div class="row no-gap" id="player1">
+          <div class="col-30">
+            <span id="player1-name"></span>
+          </div>
+          <div class="col-70">
+            <span id="player1-cards" class="others-hand"></span>
+          </div>
+        </div>
+
+        <div class="row no-gap" id="player2">
+          <div class="col-30">
+            <span id="player2-name"></span>
+          </div>
+          <div class="col-70">
+            <span id="player2-cards" class="others-hand"></span>
+          </div>
+        </div>
+
+        <div class="row no-gap" id="player3">
+          <div class="col-30">
+            <span id="player3-name"></span>
+          </div>
+          <div class="col-70">
+            <span id="player3-cards" class="others-hand"></span>
+          </div>
+        </div>
+
+        <div class="row no-gap" id="player4">
+          <div class="col-30">
+            <span id="player4-name"></span>
+          </div>
+          <div class="col-70">
+            <span id="player4-cards" class="others-hand"></span>
+          </div>
+        </div>
+
+        <div class="row no-gap" id="player5">
+          <div class="col-30">
+            <span id="player5-name"></span>
+          </div>
+          <div class="col-70">
+            <span id="player5-cards" class="others-hand"></span>
+          </div>
+        </div>
+
+        <div class="row no-gap">
+          <div class="col-70">
+            <span class="deck" id="deck-count"></span>
+            <span class="deck" id="deck"></span>
+            <span class="deck" id="trump"></span>
+            <span class="deck" id="trump-suite"></span>
+          </div>
+          <div class="col-30">
+            <span class="deck" id="discard"></span>
+          </div>
+        </div>
+
+        <div class="row no-gap" id="attack">
+          <div class="col-5"></div>
+          <div class="col-15" id="attack1"></div>
+          <div class="col-15" id="attack2"></div>
+          <div class="col-15" id="attack3"></div>
+          <div class="col-15" id="attack4"></div>
+          <div class="col-15" id="attack5"></div>
+          <div class="col-15" id="attack6"></div>
+          <div class="col-5"></div>
+        </div>
+
+        <div class="row no-gap before-game-buttons">
+          <div class="col-100">
+          </div>
+        </div>
+
+        <div class="row no-gap game-buttons">
+          <div class="col-100">
+            <button class="button" @click="start" id="start">
+              <span lang="ru">Начать игру</span>
+              <span lang="en">Start game</span>
+            </button>
+            <button class="button" @click="pass" id="pass"></button>
+            <button class="button" @click="pickUp" id="pickUp">
+              <span lang="ru">Беру</span>
+              <span lang="en">Pick up</span>
+            </button>
+            <button class="button" @click="onceMore" id="onceMore">
+              <span lang="ru">Ещё раз</span>
+              <span lang="en">Play once more</span>
+            </button>
+            <span id="waitingForPlayers"></span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="block">
+        <div data-pagination='{"el": ".swiper-pagination"}'
+             data-space-between="0"
+             data-slides-per-view="auto"
+             class="swiper-container swiper-init"
+             id="hand-container">
+          <div class="swiper-pagination"></div>
+          <div class="swiper-wrapper" id="hand"></div>
+        </div>
+      </div>
+      <div class="block block-strong" id="sortCards">
+        <div class="chip chip-outline" id="rankSort">
+          <div class="chip-label" @click="rankSort">
+            <span lang="ru">по рубашкам</span>
+            <span lang="en">by rank</span>
+          </div>
+        </div>&nbsp;
+        <div class="chip chip-outline" id="suiteSort">
+          <div class="chip-label" @click="suiteSort">
+            <span lang="ru">по мастям</span>
+            <span lang="en">by suite</span>
+          </div>
+        </div>&nbsp;
+        <div class="chip" id="noSort">
+          <div class="chip-label" @click="noSort">
+            <span lang="ru">не упорядочивать</span>
+            <span lang="en">no sorting</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toolbar toolbar-bottom">
+      <div class="toolbar-inner">
+        <div class="block"><span id="status"></span></div>
+        <div class="block"><span id="rightStatus"></span></div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+import {display} from '../js/display';
+import {subscribe, handleRefresh} from '../js/subscribe';
+import {gameReset} from '../js/misc';
+
+function rearrange(app) {
+  const dataJson = localStorage.getItem('gameData');
+  if (!dataJson) {
+    return;
+  }
+  const data = JSON.parse(dataJson);
+  display(app, data);
+}
+
+export default {
+  methods: {
+    rankSort() {
+      localStorage.setItem('sortBy', 'rank');
+      this.$$('#rankSort').removeClass('chip-outline');
+      this.$$('#suiteSort').addClass('chip-outline');
+      this.$$('#noSort').addClass('chip-outline');
+      rearrange(this);
+    },
+
+    suiteSort() {
+      localStorage.setItem('sortBy', 'suite');
+      this.$$('#rankSort').addClass('chip-outline');
+      this.$$('#suiteSort').removeClass('chip-outline');
+      this.$$('#noSort').addClass('chip-outline');
+      rearrange(this);
+    },
+
+    noSort() {
+      localStorage.removeItem('sortBy');
+      this.$$('#rankSort').addClass('chip-outline');
+      this.$$('#suiteSort').addClass('chip-outline');
+      this.$$('#noSort').removeClass('chip-outline');
+      rearrange(this);
+    },
+
+    async start() {
+      const playerKey = localStorage.getItem('playerKey');
+      const {data} = await this.$f7.request.promise.postJSON(`durak/v1/playerKey/${playerKey}/start`);
+      localStorage.setItem('gameData', JSON.stringify(data));
+      display(this, data);
+    },
+
+    async pass() {
+      const playerKey = localStorage.getItem('playerKey');
+      const {data} = await this.$f7.request.promise.postJSON(`durak/v1/playerKey/${playerKey}/pass`);
+      localStorage.setItem('gameData', JSON.stringify(data));
+      localStorage.setItem('passPressed', 'true');
+      display(this, data);
+    },
+
+    async pickUp() {
+      const playerKey = localStorage.getItem('playerKey');
+      const {data} = await this.$f7.request.promise.postJSON(`durak/v1/playerKey/${playerKey}/pickUp`);
+      localStorage.setItem('gameData', JSON.stringify(data));
+      display(this, data);
+    },
+
+    async onceMore() {
+      const playerKey = localStorage.getItem('playerKey');
+      const {data} = await this.$f7.request.promise.postJSON(`durak/v1/playerKey/${playerKey}/nextGame`);
+      localStorage.setItem('gameData', JSON.stringify(data));
+      gameReset(data);
+      display(this, data);
+      if (data.status !== 'FINISHED') {
+        subscribe(this, data.playerKey);
+      }
+      handleRefresh(this);
+    },
+  }
+};
+</script>
