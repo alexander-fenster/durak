@@ -27,7 +27,7 @@ import {
   pickUp,
   nextGame,
 } from './server';
-import {port} from './constants';
+import {cleanupTimeout, port} from './constants';
 
 const subscribers: {[key: string]: express.Response} = {};
 
@@ -168,6 +168,13 @@ app.get('/durak/v1/subscribe/:playerKey', (req, res) => {
   req.on('close', () => {
     delete subscribers[key];
   });
+  setTimeout(() => {
+    if (key in subscribers) {
+      console.log(`ending stale subscription from player ${key}`);
+      subscribers[key].status(408).end(); // end with HTTP timeout
+      delete subscribers[key];
+    }
+  }, cleanupTimeout);
 });
 
 app.listen(port);
