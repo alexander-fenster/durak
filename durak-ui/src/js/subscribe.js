@@ -15,6 +15,7 @@
 import {display} from './display';
 import {gameReset} from './misc';
 const maxErrorCount = 10;
+const requestTimeout = 60000;
 
 function resubscribe(app, playerKey, timeout=1000) {
   setTimeout(() => { subscribe(app, playerKey); }, timeout);
@@ -24,7 +25,15 @@ async function subscribe(app, playerKey) {
   let errorCount = Number(localStorage.getItem('subscribeErrorCount')); // 0 if null
 
   try {
-    const {data, status} = await app.$f7.request.promise.getJSON(`durak/v1/subscribe/${playerKey}`);
+    const {data, status} = await app.$f7.request.promise(
+      {
+        url: `durak/v1/subscribe/${playerKey}`,
+        method: 'GET',
+        timeout: requestTimeout,
+        dataType: 'json',
+        cache: false,
+      }
+    );
 
     if (status !== 200) {
       ++errorCount;
@@ -35,7 +44,7 @@ async function subscribe(app, playerKey) {
     } else {
       localStorage.setItem('gameData', JSON.stringify(data));
       display(app, data);
-      localStorage.setItem('subscribeErrorCount', 0);
+      localStorage.setItem('subscribeErrorCount', '0');
       if (data.status !== 'FINISHED') {
         resubscribe(app, playerKey, 0);
       }
@@ -63,7 +72,7 @@ function handleRefresh(app) {
       // if the existing subscription failed, subscribe again on refresh
       let errorCount = Number(localStorage.getItem('subscribeErrorCount')); // 0 if null
       if (errorCount >= maxErrorCount) {
-        localStorage.setItem('subscribeErrorCount', 0);
+        localStorage.setItem('subscribeErrorCount', '0');
         subscribe(app, data.playerKey);
       }
     }
