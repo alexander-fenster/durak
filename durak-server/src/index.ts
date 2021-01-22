@@ -164,6 +164,11 @@ app.get('/durak/v1/subscribe/:playerKey', (req, res) => {
     throw new Error('Player not found.');
   }
   const key = req.player!.key;
+  if (key in subscribers) {
+    console.log(`ending old subscription from player ${key}`);
+    subscribers[key].status(408).end(); // end with HTTP timeout
+    delete subscribers[key];
+  }
   subscribers[key] = res;
   req.on('close', () => {
     delete subscribers[key];
