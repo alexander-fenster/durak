@@ -35,6 +35,11 @@ function updateSubscribers(gameId?: number) {
   if (typeof gameId === 'undefined' || !games[gameId]) {
     return;
   }
+  for (const playerId of Object.keys(subscribers)) {
+    if (subscribers[playerId].writableEnded) {
+      delete subscribers[playerId];
+    }
+  }
   const playerKeys = games[gameId].getPlayerKeys();
   for (const playerKey of playerKeys) {
     const subscriber = subscribers[playerKey];
@@ -160,6 +165,7 @@ app.post('/durak/v1/playerKey/:playerKey/pickUp', (req, res) => {
 app.get('/durak/v1/subscribe/:playerKey', (req, res) => {
   res.setHeader('Content-Type', 'text/plain;charset=utf-8');
   res.setHeader('Cache-Control', 'no-cache, must-revalidate');
+  res.setTimeout(cleanupTimeout);
   if (!req.player) {
     throw new Error('Player not found.');
   }
@@ -173,13 +179,6 @@ app.get('/durak/v1/subscribe/:playerKey', (req, res) => {
   req.on('close', () => {
     delete subscribers[key];
   });
-  setTimeout(() => {
-    if (key in subscribers) {
-      console.log(`ending stale subscription from player ${key}`);
-      subscribers[key].status(408).end(); // end with HTTP timeout
-      delete subscribers[key];
-    }
-  }, cleanupTimeout);
 });
 
 app.listen(port);
