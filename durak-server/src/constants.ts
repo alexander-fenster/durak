@@ -52,5 +52,6 @@ export interface Card {
 export const cardsInHand = 6;
 
 export const cleanupTimeout = 60 * 60 * 1000; // 1 hour
+export const subscribeTimeout = 2 * 60 * 1000; // 2 minutes
 
 export const port = process.env.PORT || 3000;

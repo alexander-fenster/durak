@@ -27,7 +27,7 @@ import {
   pickUp,
   nextGame,
 } from './server';
-import {cleanupTimeout, port} from './constants';
+import {subscribeTimeout, port} from './constants';
 
 const subscribers: {[key: string]: express.Response} = {};
 
@@ -165,7 +165,9 @@ app.post('/durak/v1/playerKey/:playerKey/pickUp', (req, res) => {
 app.get('/durak/v1/subscribe/:playerKey', (req, res) => {
   res.setHeader('Content-Type', 'text/plain;charset=utf-8');
   res.setHeader('Cache-Control', 'no-cache, must-revalidate');
-  res.setTimeout(cleanupTimeout);
+  res.setTimeout(subscribeTimeout, () => {
+    res.status(408).end(); // end with HTTP timeout
+  });
   if (!req.player) {
     throw new Error('Player not found.');
   }
